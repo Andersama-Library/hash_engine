@@ -25,8 +25,6 @@ int main()
 {
 	hash_engine h;
 	h.seed();
-	//h.build(7, 0x80);
-	h.build(12,0x1000,11,19);
 	uint64_t hash_0 = h.pcg32_dxsm_random_r(&h.rng);
 	uint64_t hash_1 = h.pcg32_dxsm_random_r(&h.rng);
 	uint64_t hash_2 = h.pcg32_dxsm_random_r(&h.rng);
@@ -34,6 +32,34 @@ int main()
 	uint64_t hash_4 = h.pcg32_dxsm_random_r(&h.rng);
 	uint64_t hash_5 = h.pcg32_dxsm_random_r(&h.rng);
 
+	std::vector<size_t> deck;
+	h.build(6, 64, 11, 19);
+
+	const char* card_suits[] = { "hearts","dimonds","spades","clubs" };
+	const char* card_ranks[] = { "two of", "three of",
+		"four of",
+		"five of",
+		"six of",
+		"seven of",
+		"eight of",
+		"nine of",
+		"ten of",
+		"jack of",
+		"queen of",
+		"king of",
+		"ace of"
+	};
+
+	for (size_t i = 0; i < h.period; i++) {
+		size_t card_value = h.hash(i) & h.output_mask;
+		if (card_value < 52) {
+			deck.emplace_back(card_value);
+			std::cout << card_ranks[card_value >> 2] << ' ' << card_suits[card_value & 0x3] << '\n';
+		}
+	}
+
+	//h.build(7, 0x80);
+	h.build(12, 0x1000, 11, 19);
 	std::vector<uint32_t> checked;
 	/*
 	checked.resize(1 << 16);
